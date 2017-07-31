@@ -153,11 +153,3 @@ def survival_stats(data, outcomes, key, filters = []):
         nan_outcomes = all_data[pd.isnull(all_data[key])]['Survived']
         print "Passengers with missing '{}' values: {} ({} survived, {} did not survive)".format( \
               key, len(nan_outcomes), sum(nan_outcomes == 1), sum(nan_outcomes == 0))
-
-
-# if (passenger['Sex'] == 'female' and (
-#                 passenger['Pclass'] < 3 or (passenger['Pclass'] == 3 and passenger['Fare'] < 20))) or (
-#                 passenger['Pclass'] < 3 and passenger['Age'] < 10):
-#     predictions.append(1)
-# else:
-#     predictions.append(0)
