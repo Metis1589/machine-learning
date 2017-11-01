@@ -3,6 +3,7 @@ import math
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
+import random
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
@@ -101,7 +102,7 @@ class LearningAgent(Agent):
         # Set the agent state and default action
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
-        action = None
+        action = random.choice(self.valid_actions)
 
         ########### 
         ## TO DO ##
