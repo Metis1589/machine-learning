@@ -3,13 +3,14 @@ import math
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
+import json
 import random
 
 class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """ 
 
-    def __init__(self, env, learning=False, epsilon=1.0, alpha=0.5):
+    def __init__(self, env, learning=True, epsilon=2.0, alpha=0.7):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -63,7 +64,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = None
+        state = (waypoint, inputs['light'], inputs['left'], inputs['right'], inputs['oncoming'], deadline)
 
         return state
 
@@ -77,7 +78,10 @@ class LearningAgent(Agent):
         ###########
         # Calculate the maximum Q-value of all actions for a given state
 
-        maxQ = None
+        maxQ = 0
+
+        if state in self.Q:
+            maxQ = max(self.Q[state].iterkeys(), key=(lambda k: self.Q[state][k]))
 
         return maxQ 
 
@@ -92,6 +96,19 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
 
+        if state not in self.Q:
+            self.Q[state] = {
+                0: 0,
+                1: 0,
+                2: 0,
+                3: 0
+            }
+
+        self.Q[state][0] += self.env.act(self, None)
+        self.Q[state][1] += self.env.act(self, 'forward')
+        self.Q[state][2] += self.env.act(self, 'left')
+        self.Q[state][3] += self.env.act(self, 'right')
+
         return
 
 
@@ -102,7 +119,15 @@ class LearningAgent(Agent):
         # Set the agent state and default action
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
-        action = random.choice(self.valid_actions)
+
+        maxQValue = 0
+        action_number = 0
+        for state_action in self.Q[state]:
+            if (self.Q[state][state_action] > maxQValue):
+                maxQValue = self.Q[state][state_action]
+                action_number = state_action
+
+        action = self.valid_actions[action_number]
 
         ########### 
         ## TO DO ##
