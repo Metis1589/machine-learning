@@ -47,15 +47,10 @@ class LearningAgent(Agent):
             self.epsilon = 0.0
             self.alpha = 0.0
         else:
-            decay = 0.05
             self.iter = self.iter + 1
-            if (self.epsilon > decay):
-                self.epsilon = self.epsilon - decay
-                # self.epsilon = math.exp(-0.01 * self.alpha * self.iter)
-                # self.epsilon = math.cos(0.035 * self.alpha * self.iter)
-            else:
+            self.epsilon = math.cos(0.025 * self.alpha * self.iter)
+            if (self.epsilon < 0):
                 self.epsilon = 0.0
-
         return None
 
     def build_state(self):
