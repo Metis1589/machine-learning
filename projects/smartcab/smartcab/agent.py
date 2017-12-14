@@ -73,7 +73,7 @@ class LearningAgent(Agent):
         # With the hand-engineered features, this learning process gets entirely negated.
         
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, inputs['light'], inputs['left'], inputs['oncoming'])
+        state = (waypoint, inputs['light'], inputs['left'], inputs['oncoming'], inputs['right'])
 
         return state
 
@@ -154,7 +154,6 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning:
-            # self.Q[state][action] = self.Q[state][action] + self.alpha * (reward + self.get_maxQ(state) - self.Q[state][action])
             self.Q[state][action] = self.Q[state][action] + self.alpha * (reward - self.Q[state][action])
 
         return
