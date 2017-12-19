@@ -89,7 +89,8 @@ class LearningAgent(Agent):
 
         maxQ = 0.0
         if state in self.Q:
-            maxQ = max(self.Q[state].iterkeys(), key=(lambda k: self.Q[state][k]))
+            max_reward = max(self.Q[state].values())
+            maxQ = [key for key in self.Q[state].keys() if self.Q[state][key] == max_reward]
 
         return maxQ 
 
@@ -128,7 +129,11 @@ class LearningAgent(Agent):
             if random.random() < self.epsilon:
                 action = random.choice(self.valid_actions)
             else:
-                action = self.get_maxQ(state)
+                available_actions = self.get_maxQ(state)
+                if len(available_actions) > 1:
+                    action = random.choice(available_actions)
+                else:
+                    action = available_actions[0]
         else:
             action = random.choice(self.valid_actions)
 
