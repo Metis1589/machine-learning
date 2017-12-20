@@ -13157,7 +13157,7 @@ Deadline counter also was excluded from state because it making states dictionar
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong> For state = (waypoint, inputs['light'], inputs['left'], inputs['oncoming'])
-next features were selected: waypoint – agent moving direction, inputs['light'] – traffic light,  inputs['left'] – sensor data about cars presence coming from the left, inputs['oncoming'] – sensor data about oncoming cars. State space is going to be table with sizes N x M, where N is the number of different possible states in our case 5, and M is the number of different possible actions in our case 4. So for our example state space is going to be table 5x4, and this state space is enough for agent to learn a policy with a reasonable number of training trials.</p>
+next features were selected: waypoint – agent moving direction (4 possible values: [(1, 0), (0, -1), (-1, 0), (0, 1)]  # E, N, W, S), inputs['light'] – traffic light (2 possible values: green, red),  inputs['left'] – sensor data about cars presence coming from the left adn it intended direction (4 possible values: None, Left, Right, forward), inputs['oncoming'] – sensor data about oncoming cars and it intendent direction (4 possible values: None, Left, Right, forward). State space is going to be table with all possible state variations and can be calculates as multiplication of all states possible values: 4x2x4x4 = 128. So state table size is going to be 128.</p>
 
 </div>
 </div>
@@ -16232,8 +16232,7 @@ WGZmZmZmZiXiBMvMzMzMzKxE/hfxQhCXlCLJfQAAAABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer:</strong> There are a lot of possible states based on car directions and sensor data. If we try summarize optimal policy with all possible directions, it will looks like this: smartcab is going to be to Idle (None) action on red for all directions (except right turn without cars from left side); Idle (None) action on red light with car from left; left action on left turn on green traffic light with oncoming transport; turn right on red traffic light if there is no car from left, move in any direction (to keep in mind that with oncoming transport it should idle and turn at the end of green traffic light) on green traffic light.
-After investigation 'sim_improved-learning.txt' most of states has correct policy, which was described before. Let’s go through several examples:</p>
+<p><strong>Answer:</strong> There are a lot of possible states based on car directions and sensor data. If we try summarize optimal policy with all possible directions, it will looks like this: smartcab is going to take Idle (None) action on red for all directions, except right turn without cars from left going forward (right action in this case); all actions in intended directions on green traffic light (to keep in mind that on left action with oncoming car in forward direction optimal action is left, but action was chosen to simplify the case. We suppose that agent will idle while oncoming car pass the crossroad and turn left at the end of green traffic light (environment.py line 316)). After investigation 'sim_improved-learning.txt' most of states has correct policy, which was described before. Let’s go through several examples:</p>
 <p>('right', 'green', 'right', 'forward')</p>
 <p>-- forward : 0.04</p>
 <p>-- right : 0.90</p>
@@ -16280,7 +16279,7 @@ For some states calculated policy is different comparing to optimal. For example
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer:</strong> Considering this project there are some difficulties with calculation future rewards, connected with inability to predict future states (we can’t predict traffic on crossroad and sensor data about oncoming cars and cars coming from left). As result calculation of policy for some states (mostly states with red light and right move direction) will be inaccurate. Other issue can be inability to predict future start and final destination points. It can biased some states with rewards for the particular destination (based on how long it to take to this destination and in what direction should smatcab move).</p>
+<p><strong>Answer:</strong> Considering this project there are some difficulties with calculation future rewards. First point is that smarcab deals with stochastic environment. We can’t predict future states, because we don’t know what traffic light is going to be in future at the particular crossroad and how other cars going to be situated and in what direction they are going to go.  As result we can’t accurately calculate future rewards. Other point is agent can’t get sensor data about state it already passed (it has sensors for current agent state) as result we can’t exactly calculate Q(s,a) for difference to discounted future reward to ensure converge of the algorithm.</p>
 
 </div>
 </div>
